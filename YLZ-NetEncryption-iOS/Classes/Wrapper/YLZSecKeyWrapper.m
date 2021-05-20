@@ -9,7 +9,7 @@
 #import "YLZSecKeyWrapper.h"
 #import "NSData+YLZBase64.h"
 #import "NSData+YLZHexadecimal.h"
-#import "YLZNetEncryptionConfigDefines.h"
+#import "YLZRequestEncryptConfigKeys.h"
 #import <UIKit/UIKit.h>
 #import <Security/Security.h>
 #import <CommonCrypto/CommonDigest.h>

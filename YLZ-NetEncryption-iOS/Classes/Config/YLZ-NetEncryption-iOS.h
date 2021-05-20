@@ -22,5 +22,5 @@ FOUNDATION_EXPORT const unsigned char YLZNetEncryptioniOSVersionString[];
 #import <YLZ-NetEncryption-iOS/NSData+YLZHexadecimal.h>
 #import <YLZ-NetEncryption-iOS/NSDictionary+YLZSign.h>
 
-#import <YLZ-NetEncryption-iOS/YLZNetEncryptionConfigDefines.h>
+#import <YLZ-NetEncryption-iOS/YLZRequestEncryptConfigKeys.h>
 #import <YLZ-NetEncryption-iOS/YLZNetEncryptManager.h>

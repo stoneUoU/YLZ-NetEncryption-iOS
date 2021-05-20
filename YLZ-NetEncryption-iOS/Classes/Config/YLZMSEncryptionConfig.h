@@ -6,7 +6,7 @@
 //
 
 #import "YLZMSEncryptionConfig.h"
-#import "YLZNetEncryptionConfigDefines.h"
+#import "YLZRequestEncryptConfigKeys.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,6 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YLZNetEncryptionConfig : NSObject
 
 @property (nonatomic, copy) NSString *aesIv;
+
+@property (nonatomic, copy) NSString *sm2Iv;
+
+@property (nonatomic, copy) NSString *sm2PublicKey;
+
+@property (nonatomic, copy) NSString *sm2PrivateKey;
 
 @property (nonatomic, copy) NSString *encodeType;
 

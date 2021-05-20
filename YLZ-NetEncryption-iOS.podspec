@@ -30,6 +30,7 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
 
+  s.prefix_header_file = 'YLZ-NetEncryption-iOS/Classes/YLZNetcryptionModulePrefixHeaderFile.pch'
   s.source_files = 'YLZ-NetEncryption-iOS/Classes/**/*'
   
   # s.resource_bundles = {

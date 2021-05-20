@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "YLZNetEncryptionConfigDefines.h"
+#import "YLZRequestEncryptConfigKeys.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  获取默认设置
  */
-+ (YLZRequestEncryptConfigKeys)finalKeyConfigWithConfig:(YLZRequestEncryptConfigKeys)config;
++ (YLZRequestEncryptConfigKeys *)finalKeyConfigWithConfig:(YLZRequestEncryptConfigKeys *)config;
 
 #pragma mark ----------------------------:: 加密 ::----------------------------
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param extraEncryptParam 不包含在请求数据中的加密签名相关参数
  @return 加密后的数据
  */
-+(NSMutableDictionary *)encryptNetData:(NSDictionary *)param withConfigKeys:(YLZRequestEncryptConfigKeys)configKeys extra:(NSDictionary * _Nullable)extraEncryptParam;
++ (NSMutableDictionary *)encryptNetData:(NSDictionary *)param withConfigKeys:(YLZRequestEncryptConfigKeys *)configKeys extra:(NSDictionary * _Nullable)extraEncryptParam;
 
 /**
 加密、签名
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param extraEncryptParam 不包含在数据data中的解密验签相关参数
  @return 加密后的数据
  */
-+(NSMutableDictionary *)decryptNetData:(id)encData withConfigKeys:(YLZRequestEncryptConfigKeys)configKeys extra:(NSDictionary * _Nullable)extraEncryptParam;
++(NSMutableDictionary *)decryptNetData:(id)encData withConfigKeys:(YLZRequestEncryptConfigKeys *)configKeys extra:(NSDictionary * _Nullable)extraEncryptParam;
 
 /**
  解密、验签.
@@ -173,34 +173,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 +(BOOL)verifySMAuthFilePath:(NSString *)filePath appId:(nullable NSString *)appId appSecret:(nullable NSString *)appSecret version:(nullable NSString *)version smKey:(NSString *)smKey iv:(NSString *)iv;
 
-
-#pragma mark --------------------------:: 读取指定路径的验证授权文件，使用SM2验签。 ::--------------------------
-
-/**
- 验证授权文件，使用SM2验签。
-
- @param filePath 授权文件地址
- @param appId 授权应用编号
- @param appSecret 授权应用密钥
- @param version 授权的版本
- @return 是否验证成功
- */
-+(BOOL)verifySM2AuthFilePath:(NSString *)filePath appId:(nullable NSString *)appId appSecret:(nullable NSString *)appSecret version:(nullable NSString *)version;
-
-/**
- 验证授权文件，使用SM2验签。
-
- @param filePath 授权文件地址
- @param appId 授权应用编号
- @param appSecret 授权应用密钥
- @param version 授权的版本
- @param sm2PublicKey sm2公钥
- @param iv sm2的uid
- @return 是否验证成功
- */
-+(BOOL)verifySM2AuthFilePath:(NSString *)filePath appId:(nullable NSString *)appId appSecret:(nullable NSString *)appSecret version:(nullable NSString *)version sm2PublicKey:(NSString *)sm2PublicKey iv:(NSString *)iv;
-
-
 #pragma mark --------------------------:: 读取授权文件二进制数据，使用SM4解密，SM3验签。 ::--------------------------
 /**
  验证授权文件，使用SM4解密，SM3验签。
@@ -266,7 +238,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
   解密：   暴露出去给别的APP使用
- @param data 授权文件二进制数据
+ @param encryptData 授权文件二进制数据
  @param appId 授权应用编号
  @param appSecret 授权应用密钥
  */

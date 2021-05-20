@@ -1,0 +1,6 @@
+framework module YLZ_NetEncryption_iOS {
+  umbrella header "YLZ-NetEncryption-iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module Pods_YLZ_NetEncryption_iOS_Tests {
+  umbrella header "Pods-YLZ-NetEncryption-iOS_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

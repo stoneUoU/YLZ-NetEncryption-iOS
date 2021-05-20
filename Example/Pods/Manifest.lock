@@ -1,0 +1,27 @@
+PODS:
+  - FBSnapshotTestCase (2.1.4):
+    - FBSnapshotTestCase/SwiftSupport (= 2.1.4)
+  - FBSnapshotTestCase/Core (2.1.4)
+  - FBSnapshotTestCase/SwiftSupport (2.1.4):
+    - FBSnapshotTestCase/Core
+  - YLZ-NetEncryption-iOS (0.1.0)
+
+DEPENDENCIES:
+  - FBSnapshotTestCase
+  - YLZ-NetEncryption-iOS (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - FBSnapshotTestCase
+
+EXTERNAL SOURCES:
+  YLZ-NetEncryption-iOS:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
+  YLZ-NetEncryption-iOS: 57810cbeaff38f4fc35bfd02c25a79c31ed9d140
+
+PODFILE CHECKSUM: a78f1836a1a983224a2ab34ecdc0606bf6f09592
+
+COCOAPODS: 1.10.0

@@ -1,0 +1,22 @@
+{
+  "name": "YLZ-NetEncryption-iOS",
+  "version": "0.1.0",
+  "summary": "A short description of YLZ-NetEncryption-iOS.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/stoneUoU@163.com/YLZ-NetEncryption-iOS",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "stoneUoU@163.com": "stoneuou@163.com"
+  },
+  "source": {
+    "git": "https://github.com/stoneUoU@163.com/YLZ-NetEncryption-iOS.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "YLZ-NetEncryption-iOS/Classes/**/*"
+}

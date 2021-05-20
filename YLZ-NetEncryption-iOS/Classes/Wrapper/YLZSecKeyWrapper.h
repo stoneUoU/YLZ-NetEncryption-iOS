@@ -10,12 +10,6 @@
 
 #define kPublicKeyName @"com.yh.ylz.publicCiper"
 
-#define AES_IV @"0102030405060708"
-
-#define ENCRYPT_ENCODE_TYPE_BASE64 @"base64"
-
-#define ENCRYPT_ENCODE_TYPE_HEX @"hex"
-
 #define kChosenDigestLength        CC_SHA1_DIGEST_LENGTH
 
 // Global constants for padding schemes.

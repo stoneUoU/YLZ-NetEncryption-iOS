@@ -12,6 +12,7 @@
 #import "NSData+YLZHexadecimal.h"
 #import "NSDictionary+YLZSign.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "YLZMSEncryptionConfig.h"
 
 #define YLZ_SMDefault_iv @"0102030405060708"
 #define YLZ_SM2Default_iv @"1234567812345678"
@@ -70,14 +71,10 @@
  */
 +(NSMutableDictionary *)encryptNetData:(NSDictionary *)param withConfigKeys:(YLZRequestEncryptConfigKeys)ylz_configKeys extra:(NSDictionary *)extra
 {
-    
     if (!param) {return nil;}
-    
     YLZRequestEncryptConfigKeys configKeys = [self finalKeyConfigWithConfig:ylz_configKeys];
-    
     NSMutableDictionary *encryptParam = [NSMutableDictionary dictionaryWithDictionary:param];
     [encryptParam addEntriesFromDictionary:extra];
-    
     NSString *appId = [encryptParam objectForKey:configKeys.appIdKey];
     NSString *appSecret = [encryptParam objectForKey:configKeys.appSecretKey];
     NSString *signType = [encryptParam objectForKey:configKeys.signTypeKey];
@@ -89,23 +86,16 @@
     if (configKeys.encryptKey && configKeys.decryptKey) {
         [encryptPropertyMapper setObject:configKeys.encryptKey forKey:configKeys.decryptKey];
     }
-    
     NSMutableDictionary *reqParam = [NSMutableDictionary dictionaryWithDictionary:param];
-    
     //签名
     NSString *sign = [YLZNetEncryptManager signNetData:param withSecret:appSecret signType:signType blackList:signBlackList asymEncryptPrivatekey:privatekey];
     if (sign.length) {
-        
         [reqParam setObject:sign forKey:configKeys.signKey];
     }
-    
     //加密
     for (NSString *oriKey in encryptPropertyMapper) {
-        
         NSString *mapKey = encryptPropertyMapper[oriKey];
-        
         id paramObj = [reqParam objectForKey:oriKey];
-        
         NSString * encryptDataStr = [self encryptData:paramObj appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeType];
         if (encryptDataStr && encryptDataStr.length > 0) {
             //特别注意有可能oriKey==mapKey，因此先removeObjectForKey
@@ -119,13 +109,11 @@
 
 #pragma mark ----------------------------:: 解密 ::----------------------------
 
-+(NSMutableDictionary *)decryptNetData:(id)data
-{
++ (NSMutableDictionary *)decryptNetData:(id)data {
     return [self decryptNetData:data extra:nil];
 }
 
-+(NSMutableDictionary *)decryptNetData:(id)data extra:(NSDictionary * _Nullable)extra
-{
++ (NSMutableDictionary *)decryptNetData:(id)data extra:(NSDictionary * _Nullable)extra {
     return [self decryptNetData:data withConfigKeys:ylz_defaultEncryptConfigKeys extra:extra];
 }
 
@@ -139,8 +127,7 @@
  @param extra 不包含在数据data中的解密验签相关参数
  @return 加密后的数据
  */
-+(NSMutableDictionary *)decryptNetData:(id)encData withConfigKeys:(YLZRequestEncryptConfigKeys)ylz_configKeys extra:(NSDictionary *)extra
-{
++ (NSMutableDictionary *)decryptNetData:(id)encData withConfigKeys:(YLZRequestEncryptConfigKeys)ylz_configKeys extra:(NSDictionary *)extra {
     
     NSMutableDictionary *encDic;
     
@@ -210,71 +197,46 @@
     return encDic;
 }
 
-
-#pragma mark --------------------------:: old ::--------------------------
-
-+(NSMutableDictionary *)encryptNetData:(NSDictionary *)param appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList encryptPropertyMapper:(NSDictionary *)encryptPropertyMapper encodeType:(YLZEncryptionEncodeType)encodeType
-{
++ (NSMutableDictionary *)encryptNetData:(NSDictionary *)param appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList encryptPropertyMapper:(NSDictionary *)encryptPropertyMapper {
     if (!param) {return nil;}
-    
     NSMutableDictionary *reqParam = [NSMutableDictionary dictionaryWithDictionary:param];
     //签名
     NSString *sign = [YLZNetEncryptManager signNetData:param withSecret:appSecret signType:signType blackList:signBlackList asymEncryptPrivatekey:YLZ_SM2Default_PrivateKey];
     if (sign.length) {
-        
         [reqParam setObject:sign forKey:signKey];
     }
-    
     //加密
     for (NSString *oriKey in encryptPropertyMapper) {
-        
         NSString *mapKey = encryptPropertyMapper[oriKey];
-        
         id paramObj = [reqParam objectForKey:oriKey];
-        
-        NSString *encodeTypeAes = (encodeType == YLZEncryptionHexEncodeType)?YLZ_ENCRYPT_ENCODE_TYPE_HEX:((encodeType == YLZEncryptionBase64EncodeType)?YLZ_ENCRYPT_ENCODE_TYPE_BASE64:@"");
+        NSString *encodeTypeAes = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
         NSString * encryptDataStr = [self encryptData:paramObj appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeTypeAes];
         if (encryptDataStr && encryptDataStr.length > 0) {
-            //特别注意有可能oriKey==mapKey，因此先removeObjectForKey
             [reqParam removeObjectForKey:oriKey];
             [reqParam setObject:encryptDataStr forKey:mapKey];
         }
     }
     return reqParam;
-    
 }
 
-+ (NSString *)encryptData:(id)data appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType encodeType:(NSString *)encodeType
-{
++ (NSString *)encryptData:(id)data appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType encodeType:(NSString *)encodeType {
     NSString * paramJsonString = nil;
-    
     if ([data isKindOfClass:[NSDictionary class]]) {
-        
         paramJsonString = [(NSDictionary *)data ylz_sortJsonString];
-        
-    }else if([data isKindOfClass:[NSString class]]){
-        
+    } else if([data isKindOfClass:[NSString class]]) {
         paramJsonString = (NSString *)data;
     }
-    
     if (!paramJsonString) {return nil;}
-    
     //---加密操作---//
     if ([@"AES" isEqualToString:encryptType]) {
-        
-        NSString * aesKey = [YLZSecKeyWrapper encryptUseAES:appSecret withKey:appId withIv:AES_IV withEncodeType:encodeType];
-        NSString * encryptDataStr = [YLZSecKeyWrapper encryptUseAES:paramJsonString withKey:aesKey withIv:AES_IV withEncodeType:encodeType];
-        
+        NSString * aesKey = [YLZSecKeyWrapper encryptUseAES:appSecret withKey:appId withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:encodeType];
+        NSString * encryptDataStr = [YLZSecKeyWrapper encryptUseAES:paramJsonString withKey:aesKey withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:encodeType];
         return encryptDataStr;
-        
-    }else if ([@"SM4" isEqualToString:encryptType]){
-        
+    } else if ([@"SM4" isEqualToString:encryptType]) {
         NSString *sm4Key = [self sm4Content:appSecret key:appId encodeType:encodeType];
         NSString *encryptDataStr = [self sm4Content:paramJsonString key:sm4Key encodeType:encodeType];
-        
         return encryptDataStr;
-        
-    }else{
+    } else {
 #if DEBUG
         NSAssert([@"plain" isEqualToString:encryptType], @"暂不支持加密方式[%@]",encryptType);
 #endif
@@ -286,18 +248,11 @@
 +(NSString *)sm4Content:(NSString *)content key:(NSString *)key encodeType:(NSString *)encodeType
 {
     NSData *appSecretData = [content dataUsingEncoding:NSUTF8StringEncoding];
-
-    if ([encodeType isEqualToString:YLZ_ENCRYPT_ENCODE_TYPE_BASE64]) {
-        
-        
+    if ([encodeType isEqualToString:@"base64"]) {
         return  [[[YLZSMEncryption shared] sm4_encryptData:appSecretData withCipherKey:key] ylz_base64EncodedString];
-        
-    }else if ([encodeType isEqualToString:YLZ_ENCRYPT_ENCODE_TYPE_HEX]){
-        
-        
+    } else if ([encodeType isEqualToString:@"hex"]) {
         return  [[[[YLZSMEncryption shared] sm4_encryptData:appSecretData withCipherKey:key] ylz_hexadecimalString] uppercaseString];
     }
-    
     return nil;
 }
 
@@ -310,8 +265,7 @@
  
  @return 解密后的数据
  */
- +(NSMutableDictionary *)decryptNetData:(id)responseObj appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList decryptPropertyMapper:(NSDictionary *)decryptPropertyMapper encodeType:(YLZEncryptionEncodeType)encodeType
-{
+ +(NSMutableDictionary *)decryptNetData:(id)responseObj appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList decryptPropertyMapper:(NSDictionary *)decryptPropertyMapper {
     NSMutableDictionary * responseDic;
     if ([responseObj isKindOfClass:[NSDictionary class]]) {
         
@@ -339,7 +293,7 @@
             }
             continue;
         }
-        NSString *encodeTypeAes = (encodeType == YLZEncryptionHexEncodeType)?YLZ_ENCRYPT_ENCODE_TYPE_HEX:((encodeType == YLZEncryptionBase64EncodeType)?YLZ_ENCRYPT_ENCODE_TYPE_BASE64:@"");
+        NSString *encodeTypeAes = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
         id decryptParam = [self decryptData:encryptData appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeTypeAes];
         
         if (decryptParam != nil) {
@@ -372,8 +326,8 @@
         if ([@"AES" isEqualToString:encryptType]){
             //AES解密
     
-            NSString * aesKey = [YLZSecKeyWrapper encryptUseAES:appSecret withKey:appId withIv:AES_IV withEncodeType:encodeType];
-            decryptDataString = [YLZSecKeyWrapper decryptAESWrap:encryptData withKey:aesKey withIv:AES_IV withEncodeType:encodeType];
+            NSString * aesKey = [YLZSecKeyWrapper encryptUseAES:appSecret withKey:appId withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:encodeType];
+            decryptDataString = [YLZSecKeyWrapper decryptAESWrap:encryptData withKey:aesKey withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:encodeType];
 
             param = [NSJSONSerialization JSONObjectWithData:[decryptDataString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:nil];
             
@@ -381,12 +335,9 @@
             //SM4解密
             NSData *responseObjData = nil;
 
-            if ([encodeType isEqualToString:YLZ_ENCRYPT_ENCODE_TYPE_BASE64]) {
-                
+            if ([encodeType isEqualToString:@"base64"]) {
                 responseObjData = [NSData ylz_dataFromHexadecimalString:encryptData];
-                
-            }else if ([encodeType isEqualToString:YLZ_ENCRYPT_ENCODE_TYPE_HEX]){
-                
+            } else if ([encodeType isEqualToString:@"hex"]) {
                 responseObjData = [NSData ylz_dataFromHexadecimalString:encryptData];
             }
             
@@ -449,7 +400,7 @@
         
         sign = [[YLZSecKeyWrapper md5:sortString] uppercaseString];
         
-    }else if ([@"SM2" isEqualToString:signType]){
+    }else if ([@"SM2" isEqualToString:signType]) {
         
         sign = [[YLZSMEncryption shared] sm2_signPlainString:sortString withUID:YLZ_SM2Default_iv withPrivateKey:privatekey];
         
@@ -714,7 +665,7 @@
  */
 + (NSString *)encryptUseAES:(NSString *)content
 {
-    NSString *secret = [YLZSecKeyWrapper encryptUseAES:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:AES_IV withEncodeType:ENCRYPT_ENCODE_TYPE_HEX];
+    NSString *secret = [YLZSecKeyWrapper encryptUseAES:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:@"hex"];
     return secret;
 }
 
@@ -725,7 +676,7 @@
  */
 + (NSString *)decryptUseAES:(NSString *)content
 {
-    NSString *secret = [YLZSecKeyWrapper decryptAESWrap:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:AES_IV withEncodeType:ENCRYPT_ENCODE_TYPE_HEX];
+    NSString *secret = [YLZSecKeyWrapper decryptAESWrap:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:@"hex"];
     return secret;
 }
 

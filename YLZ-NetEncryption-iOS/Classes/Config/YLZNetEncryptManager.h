@@ -10,11 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef enum _YLZEncryptionEncodeType{
-    YLZEncryptionHexEncodeType = 0,
-    YLZEncryptionBase64EncodeType
-}YLZEncryptionEncodeType;
-
 @interface YLZNetEncryptManager : NSObject
 
 
@@ -25,6 +20,8 @@ typedef enum _YLZEncryptionEncodeType{
 + (YLZRequestEncryptConfigKeys)finalKeyConfigWithConfig:(YLZRequestEncryptConfigKeys)config;
 
 #pragma mark ----------------------------:: 加密 ::----------------------------
+
++ (NSMutableDictionary *)encryptNetData:(NSDictionary *)param appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList encryptPropertyMapper:(NSDictionary *)encryptPropertyMapper;
 
 /**
  加密、签名
@@ -94,12 +91,6 @@ typedef enum _YLZEncryptionEncodeType{
  */
 +(NSMutableDictionary *)decryptNetData:(id)encData;
 
-
-
-#pragma mark --------------------------:: old ::--------------------------
-
-+(NSMutableDictionary *)encryptNetData:(NSDictionary *)param appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList encryptPropertyMapper:(NSDictionary *)encryptPropertyMapper encodeType:(YLZEncryptionEncodeType)encodeType;
-
 /**
  解密、验签.
 
@@ -107,7 +98,7 @@ typedef enum _YLZEncryptionEncodeType{
  
  @return 解密后的数据
  */
-+(NSMutableDictionary *)decryptNetData:(id)responseObj appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList decryptPropertyMapper:(NSDictionary *)decryptPropertyMapper encodeType:(YLZEncryptionEncodeType)encodeType;
++(NSMutableDictionary *)decryptNetData:(id)responseObj appId:(NSString *)appId appSecret:(NSString *)appSecret encryptType:(NSString *)encryptType signType:(NSString *)signType signPropertyKey:(NSString *)signKey signBlackList:(NSArray <NSString *> *)signBlackList decryptPropertyMapper:(NSDictionary *)decryptPropertyMapper;
 
 #pragma mark --------------------------:: 签名 ::--------------------------
 /**

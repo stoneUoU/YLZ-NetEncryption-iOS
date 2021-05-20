@@ -116,9 +116,9 @@
     //加密后的数据
     NSString *result = nil;
     if (encryptedData) {
-        if ([encode isEqualToString:ENCRYPT_ENCODE_TYPE_BASE64]) {
+        if ([encode isEqualToString:@"base64"]) {
             result = [encryptedData  ylz_base64EncodedString];
-        }else if ([encode isEqualToString:ENCRYPT_ENCODE_TYPE_HEX]){
+        }else if ([encode isEqualToString:@"hex"]){
             result = [encryptedData ylz_hexadecimalString];
         }
     }
@@ -138,11 +138,11 @@
     }
     NSData * encryptedData = nil;
     
-    if ([encode isEqualToString:ENCRYPT_ENCODE_TYPE_BASE64]) {
+    if ([encode isEqualToString:@"base64"]) {
         
         encryptedData = [NSData ylz_dataFromBase64String:encryptedString];
         
-    }else if ([encode isEqualToString:ENCRYPT_ENCODE_TYPE_HEX]){
+    }else if ([encode isEqualToString:@"hex"]){
         
         encryptedData = [NSData ylz_dataFromHexadecimalString:encryptedString];
     }

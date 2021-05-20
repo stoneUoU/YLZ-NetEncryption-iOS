@@ -43,8 +43,4 @@ typedef struct  _YLZRequestEncryptConfigKeys {
 static YLZRequestEncryptConfigKeys ylz_defaultEncryptConfigKeys = {@"appId", @"appSecret", @"signType", @"encType", @"encodeType", @"signData", @"isCorrectSign", @"signBlacklist", @"data", @"encData", @"asymEncryptPublickey", @"asymEncryptPrivatekey", @"encryptMap"};
 
 
-#define YLZ_ENCRYPT_ENCODE_TYPE_BASE64 @"base64"
-#define YLZ_ENCRYPT_ENCODE_TYPE_HEX @"hex"
-
-
 #endif /* YLZNetEncryptionConfigDefines_h */

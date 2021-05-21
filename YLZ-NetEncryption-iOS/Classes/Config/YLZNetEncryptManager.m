@@ -199,8 +199,8 @@
     for (NSString *oriKey in encryptPropertyMapper) {
         NSString *mapKey = encryptPropertyMapper[oriKey];
         id paramObj = [reqParam objectForKey:oriKey];
-        NSString *encodeTypeAes = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
-        NSString * encryptDataStr = [self encryptData:paramObj appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeTypeAes];
+        NSString *encodeType = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
+        NSString * encryptDataStr = [self encryptData:paramObj appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeType];
         if (encryptDataStr && encryptDataStr.length > 0) {
             [reqParam removeObjectForKey:oriKey];
             [reqParam setObject:encryptDataStr forKey:mapKey];
@@ -279,8 +279,8 @@
             }
             continue;
         }
-        NSString *encodeTypeAes = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
-        id decryptParam = [self decryptData:encryptData appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeTypeAes];
+        NSString *encodeType = [YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType;
+        id decryptParam = [self decryptData:encryptData appId:appId appSecret:appSecret encryptType:encryptType encodeType:encodeType];
         if (decryptParam != nil) {
             //解密成功
             [responseDic removeObjectForKey:oriKey];
@@ -384,7 +384,7 @@
         
     }else if ([@"SM2" isEqualToString:signType]) {
         
-        sign = [[YLZSMEncryption shared] sm2_signPlainString:sortString withUID:[YLZMSEncryptionConfig shareConfig].encryptConfig.sm2Iv withPrivateKey:privatekey];
+        sign = [[YLZSMEncryption shared] sm2_signPlainString:sortString withUID:[YLZMSEncryptionConfig shareConfig].encryptConfig.sm2Iv withPrivateKey:privatekey withEncyptType:[YLZMSEncryptionConfig shareConfig].encryptConfig.signEncodeType];
         
     }else if ([@"SHA256" isEqualToString:signType]){
         
@@ -409,7 +409,7 @@
 #endif
     if ([@"SM2" isEqualToString:signType]){
         
-        BOOL isPass = [[YLZSMEncryption shared] sm2_verifyWithPlainString:sortString withSigned:sign withUID:[YLZMSEncryptionConfig shareConfig].encryptConfig.sm2Iv withPublicKey:publickey];
+        BOOL isPass = [[YLZSMEncryption shared] sm2_verifyWithPlainString:sortString withSigned:sign withUID:[YLZMSEncryptionConfig shareConfig].encryptConfig.sm2Iv withPublicKey:publickey withEncyptType:[YLZMSEncryptionConfig shareConfig].encryptConfig.signEncodeType];
         
         return isPass;
         
@@ -595,7 +595,7 @@
  */
 + (NSString *)encryptUseAES:(NSString *)content
 {
-    NSString *secret = [YLZSecKeyWrapper encryptUseAES:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:@"hex"];
+    NSString *secret = [YLZSecKeyWrapper encryptUseAES:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:[YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType];
     return secret;
 }
 
@@ -606,7 +606,7 @@
  */
 + (NSString *)decryptUseAES:(NSString *)content
 {
-    NSString *secret = [YLZSecKeyWrapper decryptAESWrap:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:@"hex"];
+    NSString *secret = [YLZSecKeyWrapper decryptAESWrap:content withKey:[[NSBundle mainBundle] bundleIdentifier] withIv:[YLZMSEncryptionConfig shareConfig].encryptConfig.aesIv withEncodeType:[YLZMSEncryptionConfig shareConfig].encryptConfig.encodeType];
     return secret;
 }
 

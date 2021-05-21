@@ -26,13 +26,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *aesIv;
 
+// 加密的类型:
+@property (nonatomic, copy) NSString *encodeType;
+
 @property (nonatomic, copy) NSString *sm2Iv;
 
 @property (nonatomic, copy) NSString *sm2PublicKey;
 
 @property (nonatomic, copy) NSString *sm2PrivateKey;
 
-@property (nonatomic, copy) NSString *encodeType;
+// 加签的类型:
+@property (nonatomic, copy) NSString *signEncodeType;
 
 @end
 

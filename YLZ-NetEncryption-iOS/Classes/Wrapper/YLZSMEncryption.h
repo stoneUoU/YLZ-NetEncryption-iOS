@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param key for private
  @return signed string
  */
-- (NSString * _Nullable)sm2_signPlainString:(NSString *)str withUID:(NSString *)uid withPrivateKey:(NSString *)key;
+- (NSString * _Nullable)sm2_signPlainString:(NSString *)str withUID:(NSString *)uid withPrivateKey:(NSString *)key withEncyptType:(NSString *)typeString;
 
 /**
  verify sign with plain string for sm2
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param key for public
  @return whether equal origin
  */
-- (BOOL)sm2_verifyWithPlainString:(NSString *)str withSigned:(NSString *)sign withUID:(NSString *)uid withPublicKey:(NSString *)key;
+- (BOOL)sm2_verifyWithPlainString:(NSString *)str withSigned:(NSString *)sign withUID:(NSString *)uid withPublicKey:(NSString *)key withEncyptType:(NSString *)typeString;
 
 #pragma mark --- SM3 Algorithm ---
 

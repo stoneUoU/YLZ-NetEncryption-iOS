@@ -723,7 +723,7 @@ decrypt_file_end:
     return resultStr;
 }
 
-- (NSString * _Nullable)sm2_signPlainString:(NSString *)str withUID:(NSString *)uid withPrivateKey:(NSString *)key {
+- (NSString * _Nullable)sm2_signPlainString:(NSString *)str withUID:(NSString *)uid withPrivateKey:(NSString *)key withEncyptType:(NSString *)typeString {
     if ([str length] == 0 || [key length] == 0) {
         return @"";
     }
@@ -747,11 +747,10 @@ decrypt_file_end:
     //多一位\x04 需要去掉
     NSData *data = [NSData dataWithBytes:result length:outlen];
     //注：目前服务端使用的是base64字符串格式，目前没有要求两种都兼容，先写死base64
-    return [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-//    return [[data ylz_hexadecimalString] uppercaseString];
+    return [typeString isEqualToString:@"hex"] ? [[data ylz_hexadecimalString] uppercaseString] : [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
 }
 
-- (BOOL)sm2_verifyWithPlainString:(NSString *)str withSigned:(NSString *)sign withUID:(NSString *)uid withPublicKey:(NSString *)key {
+- (BOOL)sm2_verifyWithPlainString:(NSString *)str withSigned:(NSString *)sign withUID:(NSString *)uid withPublicKey:(NSString *)key  withEncyptType:(NSString *)typeString {
     if ([str length] == 0 || sign.length == 0 || [key length] == 0) {
         return false;
     }
@@ -761,8 +760,9 @@ decrypt_file_end:
     
     const char *srcData = [str cStringUsingEncoding:NSUTF8StringEncoding];
     //注：目前服务端使用的是base64字符串格式，目前没有要求两种都兼容，先写死base64
-//    NSData *signData = [NSData ylz_dataFromHexadecimalString:sign];
-    NSData *signData = [[NSData alloc] initWithBase64EncodedString:sign options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    
+    NSData *signData = [typeString isEqualToString:@"hex"] ? [NSData ylz_dataFromHexadecimalString:sign] : [[NSData alloc] initWithBase64EncodedString:sign options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    
     const char *uidData = [uid cStringUsingEncoding:NSUTF8StringEncoding];
     NSData *keyData =  [NSData ylz_dataFromHexadecimalString:key];
     unsigned long uidLen = uidData?strlen(uidData):0;
